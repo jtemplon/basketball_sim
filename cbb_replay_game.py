@@ -57,6 +57,7 @@ def make_substitutions(game, team):
             pass
 
 def find_fouler(action_state, opposing_player, game):
+    # print "Looking for fouler"
     if action_state[0] == "def":
         opposing_player.game_stats.fouls += 1
     else:

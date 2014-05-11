@@ -85,35 +85,88 @@ def flip_card():
 
 def make_random_results(player, o_or_d):
     if o_or_d == "o":
+        # print "Offensive Ratings"
+        total_points = []
+        total_points.append(random.randint(1,16))
+        total_points.append(round(random.normalvariate(14, 3)))
+        total_points.append(round(random.normalvariate(12, 4)))
+        total_points.append(round(random.normalvariate(14, 3)))
+        total_points.append(round(random.normalvariate(23, 15)))
+        total_points.append(round(random.normalvariate(9, 5)))
+        total_points.append(random.randint(0,6))
+        total_points.append(random.randint(0,10))
+        for tp in total_points:
+            if tp < 0:
+                tp = 0
+        # print total_points
         break_points = []
-        i = 0
-        while i < 8:
-            bk = random.randint(0,99)
-            break_points.append(bk)
-            i += 1
-        print break_points
-        break_points = sorted(break_points)
+        total = 1
+        if sum(total_points) != 98:
+            scale = 98/float(sum(total_points))
+            for tp in total_points:
+                tp = int(tp*scale)
+                total += tp
+                break_points.append(total)            
+        else:
+            for tp in total_points:
+                total += tp
+                break_points.append(total)
+        # print break_points
         player.offense_results.plays["fg_foul_range"] = (1, break_points[0])
         player.offense_results.plays["fg_range"] = (break_points[0]+1, break_points[1])
         player.offense_results.plays["assist_range"] = (break_points[1]+1, break_points[2])
         player.offense_results.plays["foul_range"] = (break_points[2]+1, break_points[3])
         player.offense_results.plays["miss_range"] = (break_points[3]+1, break_points[4])
-        player.offense_results.plays["block_range"] = (break_points[4]+1, break_points[5])
-        player.offense_results.plays["offensive_foul_range"] = (break_points[5]+1, break_points[6])
-        player.offense_results.plays["turnover_range"] = (break_points[6]+1, break_points[7])
-        player.offense_results.plays["steal_range"] = (break_points[7]+1, 99)
-        three_point_max = random.randint(1,40)
-        ft_pct = random.randint(30,90)
-        player.offense_results.three_point_shot = (1, three_point_max)
+        player.offense_results.plays["block_range"] = None
+        player.offense_results.plays["offensive_foul_range"] = (break_points[4]+1, break_points[5])
+        player.offense_results.plays["turnover_range"] = (break_points[5]+1, break_points[6])
+        player.offense_results.plays["steal_range"] = (break_points[6]+1, 99)
+        if player.three_point_rating is None:
+            player.offense_results.three_point_shot = (1, 3)
+        else:
+            three_point_rating = round(random.normalvariate(0.33, 0.05)*100)+3
+            player.offense_results.three_point_shot = (1, three_point_rating)
+        ft_pct = round(random.normalvariate(0.64, 0.08)*100)
         player.offense_results.free_throw_shot = (1, ft_pct)
+        # print player.offense_results.plays
     else:
+        # print "Defensive ratings"
+        total_points = []
+        total_points.append(round(random.normalvariate(24, 3)))
+        total_points.append(round(random.normalvariate(25, 5)))
+        block_range = random.randint(0,30)
+        if block_range > 25:
+            miss_range = 0
+        else:
+            miss_range = round(random.normalvariate(24, 4))
+        total_points.append(miss_range)
+        total_points.append(block_range)
+        steal_range = random.randint(0,25)
+        if steal_range > 20:
+            to_range = 0
+        elif steal_range > 15:
+            to_range = random.randint(1,10)
+        else:
+            to_range = round(random.normalvariate(15, 2))
+        total_points.append(to_range)
+        total_points.append(steal_range)
+        for tp in total_points:
+            if tp < 0:
+                tp = 0
+        # print total_points
         break_points = []
-        i = 0
-        while i < 5:
-            bk = random.randint(0,99)
-            break_points.append(bk)
-            i += 1
-        break_points = sorted(break_points)
+        total = 1
+        if sum(total_points) != 98:
+            scale = 98/float(sum(total_points))
+            for tp in total_points:
+                tp = int(tp*scale)
+                total += tp
+                break_points.append(total)            
+        else:
+            for tp in total_points:
+                total += tp
+                break_points.append(total)
+        # print break_points
         player.defense_results.plays["fg_foul_range"] = None
         player.defense_results.plays["fg_range"] = (1, break_points[0])
         player.defense_results.plays["assist_range"] = None
@@ -123,8 +176,9 @@ def make_random_results(player, o_or_d):
         player.defense_results.plays["offensive_foul_range"] = None
         player.defense_results.plays["turnover_range"] = (break_points[3]+1, break_points[4])
         player.defense_results.plays["steal_range"] = (break_points[4]+1, 99)
-        three_point_max = random.randint(1,40)
+        three_point_max = round(random.normalvariate(24, 3))
         player.defense_results.three_point_shot = (1, three_point_max)
+        # print player.defense_results.plays
 
 def make_random_players():
     roster = []
@@ -145,38 +199,56 @@ def make_random_players():
         else:
             pass
         player.power_rating = random.randint(1,10)
-        shot_random = random.randint(1,20)
-        if player.primary_position in ["pg", "sg", "sf"]:
-            three_random = random.randint(0,10)
-            if (shot_random + three_random) > 23:
-                player.three_point_rating = 23
+        #Guards shoot more threes
+        if player.primary_position is "g":
+            top_shot_rating = round(random.normalvariate(20, 5)*0.60)
+            shot_rating_diff = round(random.normalvariate(3, 4))
+            if shot_rating_diff > (top_shot_rating/float(0.75)):
+                shot_rating_diff = round(top_shot_rating/float(0.75))
+            if shot_rating_diff == 0:
+                player.three_point_rating = None
+                player.two_point_rating = top_shot_rating
             else:
-                player.three_point_rating = shot_random + three_random
+                player.three_point_rating = top_shot_rating
+                player.two_point_rating = (top_shot_rating - shot_rating_diff)
+        #Made to reflect current forward trends (at least tried to)
+        elif player.primary_position is "f":
+            top_shot_rating = round(random.normalvariate(20, 5)*0.60)
+            shot_rating_diff = round(random.normalvariate(2, 1))
+            if shot_rating_diff > (top_shot_rating/float(0.75)):
+                shot_rating_diff = round(top_shot_rating/float(0.75))
+            if shot_rating_diff == 0:
+                player.three_point_rating = None
+                player.two_point_rating = top_shot_rating
+            else:
+                player.three_point_rating = top_shot_rating
+                player.two_point_rating = (top_shot_rating - shot_rating_diff)            
+        #Centers don't shoot threes, unless they're at Princeton, we ignore that case
         else:
+            top_shot_rating = round(random.normalvariate(22, 7)*0.60)
             player.three_point_rating = None
-        player.shot_rating = shot_random
-        if shot_random % 3 == 0:
-            player.shot_extra_flip = True
-        else:
-            player.shot_extra_flip = False
+            player.two_point_rating = top_shot_rating
         player.shots_per_game = random.randint(1,25)
         if player.shots_per_game > 20:
             player.call_for_ball_times = player.shots_per_game - 20
         else:
             player.call_for_ball_times = 0
-        player.defensive_rebound_rating = random.randint(1,20)
-        if player.defensive_rebound_rating > 15 and random.randint(1,5) > 3:
-            player.dominant_defensive_rebound_rating = (15, player.defensive_rebound_rating)
+        defensive_rebound_num = round(random.normalvariate(12, 5))
+        if defensive_rebound_num > 20:
+            player.defensive_rebound_rating = 20
+            dom_def_reb_num = 20 - (defensive_rebound_num - 20)
+            player.dominant_defensive_rebound_Rating = (dom_def_reb_num, 20)
         else:
-            player.dominant_defensive_rebound_rating = (0, 0)
-        player.offensive_rebound_rating = round(random.normalvariate(9, 4))
-        if player.offensive_rebound_rating < 1:
-            player.offensive_rebound_rating = 1
-        if player.offensive_rebound_rating > 15 and random.randint(1,5) == 5:
-            player.dominant_offensive_rebound_rating = (15, player.offensive_rebound_rating)
+            player.defensive_rebound_rating = defensive_rebound_num
+        offensive_rebound_num = round(random.normalvariate(10, 3))
+        if offensive_rebound_num > 20:
+            player.offensive_rebound_rating = 20
+            dom_off_reb_num = 20 - (offensive_rebound_num - 20)
+            player.dominant_offensive_rebound_Rating = (dom_off_reb_num, 20)
         else:
-            player.dominant_offensive_rebound_rating = (0, 0)
-        player.assist_rating = random.randint(1,25)
+            player.offensive_rebound_rating = offensive_rebound_num
+        assist_num = 7 + random.randint(1,10) + random.randint(0,5)*5
+        player.assist_rating = round(assist_num*1.2)
         make_random_results(player, "o")
         make_random_results(player, "d")
         roster.append(player)
