@@ -1,5 +1,6 @@
 from cbb_replay_models import *
 from cbb_replay_game import *
+from player_archetypes import *
 
 game = Game()
 game.home = Team()
@@ -10,8 +11,8 @@ game.home.opponent = game.away
 game.away.name = "Team 2"
 game.away.opponent = game.home
 #Make Rosters
-game.home.roster = make_random_players()
-game.away.roster = make_random_players()
+game.home.roster = [StarPointGuard(), StarPointGuard(), StarPointGuard(), StarShootingGuard(), StarComboGuard(), StarForwardCenter(), StarForwardCenter(), StarForwardCenter()]
+game.away.roster = [StarPointGuard(), StarShootingGuard(), StarComboGuard(), StarComboGuard(), StarForwardCenter(), StarForwardCenter(), StarForwardCenter(), StarForwardCenter()]
 
 #Make Starting Lineups
 for p in game.home.roster:
@@ -109,7 +110,7 @@ else:
     print "they tied at %s" %(game.home.points)
 print "%s Results:" %(game.home.name)
 for p in game.home.roster:
-    print p.name, p.game_stats.points, p.game_stats.reb, p.game_stats.assists, p.game_stats.fouls
+    print p.name, p.primary_position, p.game_stats.points, p.game_stats.reb, p.game_stats.assists, p.game_stats.fouls
 print "%s Results:" %(game.away.name)
 for p in game.away.roster:
-    print p.name, p.game_stats.points, p.game_stats.reb, p.game_stats.assists, p.game_stats.fouls
+    print p.name, p.primary_position, p.game_stats.points, p.game_stats.reb, p.game_stats.assists, p.game_stats.fouls
