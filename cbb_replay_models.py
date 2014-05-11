@@ -2,7 +2,7 @@ import random
 import names
 #Note: One thing we're definitely doing is converting X to 100
 
-class PlayerResults():
+class PlayerResults:
     plays = {}
     three_point_shot = (0, 0)
     def __init__(self, side):
@@ -11,7 +11,7 @@ class PlayerResults():
         else:
             self.free_throw_shot = None
 
-class GameStats():
+class GameStats:
     fouls = 0
     shots = 0
     points = 0
@@ -22,7 +22,7 @@ class GameStats():
     oreb = 0
     reb = 0
 
-class Player():
+class Player:
     name = ""
     team = None
     primary_position = ""
@@ -41,7 +41,7 @@ class Player():
     def __init__(self):
         self.game_stats = GameStats()
 
-class Team():
+class Team:
     def __init__(self):
         self.on_court = {"pg": None, "sg": None, "sf": None,
                          "pf": None, "c": None}
@@ -50,7 +50,7 @@ class Team():
         self.points = 0
         self.fouls = 0
 
-class Game():
+class Game:
     home = Team()
     away = Team()
     total_time_segments = 0
