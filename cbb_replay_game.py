@@ -363,31 +363,26 @@ def shot_sequence(game):
         else:
             game_runner(game)
 
-def end_game(game):
-    return game
-
 def game_runner(game):
-    # print "GAME"
-    # print game.total_time_segments
-    #Start the game
-    if game.total_time_segments == 0:
-        print "Starting"
-        jump_ball(game)
-        game.possession_arrow = game.possession.opponent
-        shot_sequence(game)
-    #Play the first half
-    elif game.total_time_segments < 130:
-        shot_sequence(game)
-    #This is halftime
-    elif game.total_time_segments == 130:
-        print "Halftime"
-        game.possession = game.possession_arrow
-        game.possession_arrow = game.possession.opponent
-        shot_sequence(game)
-    #This is the second half
-    elif game.total_time_segments < 273:
-        shot_sequence(game)
-    #This is the potential end of the game
-    else:
-        pass
+    while game.total_time_segments <= 273:
+        if game.total_time_segments == 0:
+            print "Starting"
+            jump_ball(game)
+            game.possession_arrow = game.possession.opponent
+            shot_sequence(game)
+        #Play the first half
+        elif game.total_time_segments < 130:
+            shot_sequence(game)
+        #This is halftime
+        elif game.total_time_segments == 130:
+            print "Halftime"
+            game.possession = game.possession_arrow
+            game.possession_arrow = game.possession.opponent
+            shot_sequence(game)
+        #This is the second half
+        elif game.total_time_segments < 273:
+            shot_sequence(game)
+        #This is the potential end of the game
+        else:
+            break
     return game
